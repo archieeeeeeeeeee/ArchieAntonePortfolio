@@ -95,6 +95,14 @@
   }
 }
 
+@keyframes load-progress {
+  0% { width: 0%; }
+  30% { width: 60%; }
+  50% { width: 75%; }
+  80% { width: 90%; }
+  100% { width: 100%; }
+}
+
 /* Terminal and Code styling */
 .terminal-line {
   line-height: 1.5;
@@ -116,6 +124,11 @@
 .card-content {
   transform-style: preserve-3d;
   transform: perspective(1000px);
+}
+
+/* Loading progress animation */
+.animate-load-progress {
+  animation: load-progress 2s ease-in-out forwards;
 }
 
 /* Code colors for syntax highlighting */
