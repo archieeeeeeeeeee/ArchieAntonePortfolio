@@ -44,11 +44,15 @@ const BinaryParticles = ({
       opacity: number;
       valueChangeInterval: number;
       lastValueChange: number;
+      canvasWidth: number;
+      canvasHeight: number;
       
-      constructor(x: number, y: number, size: number) {
+      constructor(x: number, y: number, size: number, canvasWidth: number, canvasHeight: number) {
         this.x = x;
         this.y = y;
         this.size = size;
+        this.canvasWidth = canvasWidth;
+        this.canvasHeight = canvasHeight;
         this.value = Math.random() > 0.5 ? '1' : '0';
         this.color = isDarkTheme ? 
           'rgba(58, 134, 255, 0.7)' : 
@@ -59,13 +63,17 @@ const BinaryParticles = ({
         this.lastValueChange = Date.now();
       }
       
-      update() {
+      update(currentWidth: number, currentHeight: number) {
+        // Update canvas dimensions reference if changed
+        this.canvasWidth = currentWidth;
+        this.canvasHeight = currentHeight;
+        
         this.y += this.speed;
         
         // Reset position when particle goes off screen
-        if (canvas && this.y > canvas.height) {
+        if (this.y > this.canvasHeight) {
           this.y = 0 - this.size;
-          this.x = Math.random() * (canvas.width || 0);
+          this.x = Math.random() * this.canvasWidth;
         }
         
         // Randomly change the binary value
@@ -76,36 +84,38 @@ const BinaryParticles = ({
         }
       }
       
-      draw() {
-        if (!ctx) return;
-        
-        ctx.font = `${this.size}px "Courier New", monospace`;
-        ctx.fillStyle = this.color;
-        ctx.globalAlpha = this.opacity;
-        ctx.fillText(this.value, this.x, this.y);
-        ctx.globalAlpha = 1;
+      draw(context: CanvasRenderingContext2D) {
+        context.font = `${this.size}px "Courier New", monospace`;
+        context.fillStyle = this.color;
+        context.globalAlpha = this.opacity;
+        context.fillText(this.value, this.x, this.y);
+        context.globalAlpha = 1;
       }
     }
     
     // Create particles
     const particles: BinaryParticle[] = [];
     
-    for (let i = 0; i < particleCount; i++) {
-      const size = Math.random() * 12 + 10;
-      const x = Math.random() * canvas.width;
-      const y = Math.random() * canvas.height;
-      particles.push(new BinaryParticle(x, y, size));
+    if (canvas) {
+      for (let i = 0; i < particleCount; i++) {
+        const size = Math.random() * 12 + 10;
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        particles.push(new BinaryParticle(x, y, size, canvas.width, canvas.height));
+      }
     }
     
     // Animation loop
     let animationFrameId: number;
     
     const animate = () => {
+      if (!ctx || !canvas) return;
+      
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       particles.forEach(particle => {
-        particle.update();
-        particle.draw();
+        particle.update(canvas.width, canvas.height);
+        particle.draw(ctx);
       });
       
       animationFrameId = requestAnimationFrame(animate);
