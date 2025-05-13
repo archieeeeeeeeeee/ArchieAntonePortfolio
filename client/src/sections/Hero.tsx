@@ -23,13 +23,18 @@ const Hero = () => {
     }, 800);
 
     // Hero content animation with staggered effect
-    tl.from(contentRef.current?.querySelectorAll('.hero-anim-item'), {
-      opacity: 0,
-      y: 50,
-      duration: 0.8,
-      stagger: 0.15,
-      delay: 0.5,
-    });
+    if (contentRef.current) {
+      const heroItems = contentRef.current.querySelectorAll('.hero-anim-item');
+      if (heroItems.length > 0) {
+        tl.from(heroItems, {
+          opacity: 0,
+          y: 50,
+          duration: 0.8,
+          stagger: 0.15,
+          delay: 0.5,
+        });
+      }
+    }
 
     // Bounce animation for chevron
     gsap.to(chevronRef.current, {

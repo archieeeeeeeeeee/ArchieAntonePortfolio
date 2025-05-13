@@ -56,3 +56,93 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+/* Custom animations */
+@keyframes shine {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes glitch {
+  0% {
+    clip-path: inset(40% 0 61% 0);
+    transform: translate(-5px, 5px);
+  }
+  20% {
+    clip-path: inset(92% 0 1% 0);
+    transform: translate(5px, -5px);
+  }
+  40% {
+    clip-path: inset(43% 0 1% 0);
+    transform: translate(3px, 2px);
+  }
+  60% {
+    clip-path: inset(25% 0 58% 0);
+    transform: translate(-5px, -2px);
+  }
+  80% {
+    clip-path: inset(54% 0 7% 0);
+    transform: translate(2px, -3px);
+  }
+  100% {
+    clip-path: inset(58% 0 43% 0);
+    transform: translate(-2px, 5px);
+  }
+}
+
+/* Terminal and Code styling */
+.terminal-line {
+  line-height: 1.5;
+  margin-bottom: 0.25rem;
+}
+
+.code-line {
+  line-height: 1.5;
+  margin-bottom: 0.25rem;
+  font-family: monospace;
+}
+
+/* Cursor blinking animation */
+.cursor-blink {
+  animation: blink 1s infinite;
+}
+
+/* 3D Card effect */
+.card-content {
+  transform-style: preserve-3d;
+  transform: perspective(1000px);
+}
+
+/* Code colors for syntax highlighting */
+.code-keyword {
+  color: #ff79c6; /* Pink */
+}
+
+.code-function {
+  color: #50fa7b; /* Green */
+}
+
+.code-string {
+  color: #f1fa8c; /* Yellow */
+}
+
+.code-number {
+  color: #bd93f9; /* Purple */
+}
+
+.code-comment {
+  color: #6272a4; /* Blue-gray */
+}
+
+.code-operator {
+  color: #ff79c6; /* Pink */
+}
+
+.code-variable {
+  color: #8be9fd; /* Cyan */
+}
