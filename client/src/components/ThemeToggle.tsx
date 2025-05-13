@@ -92,25 +92,32 @@ const ThemeToggle = () => {
   return (
     <button
       ref={buttonRef}
-      className="theme-toggle fixed top-4 right-4 bg-primary/10 text-primary rounded-full p-2 z-50 shadow-lg hover:shadow-primary/20 transition-shadow duration-300"
+      className="theme-toggle fixed top-4 right-4 z-50 transition-all duration-300 rounded-lg"
+      style={{
+        backgroundColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)',
+        color: isDark ? '#ffffff' : '#000000',
+        padding: '10px 14px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        border: isDark ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid rgba(0, 0, 0, 0.1)'
+      }}
       onClick={toggleTheme}
       aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
     >
       <div ref={iconContainerRef} className="relative">
         {isDark ? (
           <div className="flex items-center">
-            <Sun className="h-5 w-5" />
-            <span className="ml-2 hidden sm:inline text-xs">Light</span>
+            <Sun className="h-5 w-5 text-yellow-300" />
+            <span className="ml-2 text-sm font-medium text-white">Light Mode</span>
           </div>
         ) : (
           <div className="flex items-center">
-            <Moon className="h-5 w-5" />
-            <span className="ml-2 hidden sm:inline text-xs">Dark</span>
+            <Moon className="h-5 w-5 text-indigo-600" />
+            <span className="ml-2 text-sm font-medium">Dark Mode</span>
           </div>
         )}
         
         {/* Coding symbol decoration */}
-        <div className="absolute -top-2 -right-2 text-xs opacity-30">
+        <div className="absolute -top-2 -right-2 text-xs" style={{ color: 'var(--color-primary)' }}>
           {isDark ? <Code className="h-3 w-3" /> : <Terminal className="h-3 w-3" />}
         </div>
       </div>

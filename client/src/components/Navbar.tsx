@@ -96,56 +96,84 @@ const Navbar = () => {
     <nav
       ref={navRef}
       id="main-nav"
-      className="fixed top-0 left-0 w-full bg-dark/80 backdrop-blur-md z-50 transition-all duration-300 py-4"
+      className="fixed top-0 left-0 w-full backdrop-blur-md z-50 transition-all duration-300 py-4"
+      style={{
+        backgroundColor: 'var(--color-background)',
+        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
+        borderBottom: '1px solid var(--color-border)'
+      }}
     >
       <div className="container mx-auto px-4 flex justify-between items-center">
         <a
           href="#home"
-          className="text-2xl font-bold font-poppins"
+          className="text-2xl font-bold font-poppins relative"
           onClick={(e) => handleNavClick(e, "#home")}
         >
           <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             Archie
           </span>
-          <span className="text-light">.dev</span>
+          <span style={{ color: 'var(--color-text)' }}>.dev</span>
+          <div 
+            className="absolute -bottom-1 left-0 h-1 w-full rounded-full opacity-70"
+            style={{ background: 'linear-gradient(to right, var(--color-primary), var(--color-secondary))' }}
+          ></div>
         </a>
         
-        <div className="hidden md:flex items-center space-x-6">
+        <div className="hidden md:flex items-center space-x-8">
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className={`nav-link text-light hover:text-primary transition-colors ${
-                link.href === "#home" ? "active-nav" : ""
-              }`}
+              className="nav-link font-medium transition-colors relative hover:scale-105 group"
+              style={{ 
+                color: 'var(--color-text)',
+                textShadow: '0px 1px 1px rgba(0,0,0,0.1)'
+              }}
               onClick={(e) => handleNavClick(e, link.href)}
             >
               {link.label}
+              <span 
+                className="absolute -bottom-1 left-0 h-0.5 w-0 transition-all duration-300 group-hover:w-full"
+                style={{ background: 'var(--color-primary)' }}
+              ></span>
             </a>
           ))}
         </div>
         
         <button
-          className="md:hidden text-light"
+          className="md:hidden p-2 rounded-md"
+          style={{ 
+            color: 'var(--color-text)', 
+            backgroundColor: 'var(--color-primary)', 
+            opacity: 0.8 
+          }}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
         >
-          {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {mobileMenuOpen ? <X className="h-6 w-6 text-white" /> : <Menu className="h-6 w-6 text-white" />}
         </button>
       </div>
       
       {/* Mobile menu */}
       <div
-        className={`md:hidden bg-dark/95 backdrop-blur-md transition-all duration-300 overflow-hidden ${
+        className={`md:hidden transition-all duration-300 overflow-hidden backdrop-blur-md ${
           mobileMenuOpen ? "max-h-96" : "max-h-0"
         }`}
+        style={{
+          backgroundColor: 'var(--color-background)',
+          borderTop: '1px solid var(--color-border)'
+        }}
       >
         <div className="container mx-auto px-4 py-4 flex flex-col space-y-4">
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-light hover:text-primary transition-colors py-2"
+              className="transition-colors py-3 px-4 rounded-md hover:scale-105"
+              style={{ 
+                color: 'var(--color-text)',
+                backgroundColor: link.href === "#home" ? 'rgba(58, 134, 255, 0.1)' : 'transparent'
+              }}
               onClick={(e) => handleNavClick(e, link.href)}
             >
               {link.label}
