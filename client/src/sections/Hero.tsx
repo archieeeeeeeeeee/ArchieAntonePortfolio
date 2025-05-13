@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Code, Terminal } from "lucide-react";
+import { ChevronDown, Code, Terminal, Github, Linkedin } from "lucide-react";
 import gsap from "gsap";
 import ParticlesCanvas from "@/components/ParticlesCanvas";
 import CodeMatrix from "@/components/CodeMatrix";
@@ -7,6 +7,9 @@ import TypingEffect from "@/components/TypingEffect";
 import CubeScene from "@/components/CubeScene";
 import FloatingIcons from "@/components/FloatingIcons";
 import Terrain3D from "@/components/Terrain3D";
+import BinaryParticles from "@/components/BinaryParticles";
+import CodeSphere from "@/components/CodeSphere";
+import { SOCIAL_LINKS } from "@/constants";
 
 const Hero = () => {
   const sectionRef = useRef<HTMLElement>(null);

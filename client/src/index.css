@@ -3,49 +3,87 @@
 @tailwind utilities;
 
 :root {
-      --background: 0 0% 100%;
---foreground: 20 14.3% 4.1%;
---muted: 60 4.8% 95.9%;
---muted-foreground: 25 5.3% 44.7%;
---popover: 0 0% 100%;
---popover-foreground: 20 14.3% 4.1%;
---card: 0 0% 100%;
---card-foreground: 20 14.3% 4.1%;
---border: 20 5.9% 90%;
---input: 20 5.9% 90%;
---primary: 207 90% 54%;
---primary-foreground: 211 100% 99%;
---secondary: 60 4.8% 95.9%;
---secondary-foreground: 24 9.8% 10%;
---accent: 60 4.8% 95.9%;
---accent-foreground: 24 9.8% 10%;
---destructive: 0 84.2% 60.2%;
---destructive-foreground: 60 9.1% 97.8%;
---ring: 20 14.3% 4.1%;
---radius: 0.5rem;
-  }
-  .dark {
-      --background: 240 10% 3.9%;
---foreground: 0 0% 98%;
---muted: 240 3.7% 15.9%;
---muted-foreground: 240 5% 64.9%;
---popover: 240 10% 3.9%;
---popover-foreground: 0 0% 98%;
---card: 240 10% 3.9%;
---card-foreground: 0 0% 98%;
---border: 240 3.7% 15.9%;
---input: 240 3.7% 15.9%;
---primary: 207 90% 54%;
---primary-foreground: 211 100% 99%;
---secondary: 240 3.7% 15.9%;
---secondary-foreground: 0 0% 98%;
---accent: 240 3.7% 15.9%;
---accent-foreground: 0 0% 98%;
---destructive: 0 62.8% 30.6%;
---destructive-foreground: 0 0% 98%;
---ring: 240 4.9% 83.9%;
---radius: 0.5rem;
-  }
+  /* Default theme colors - Dark */
+  --color-background: #121212;
+  --color-text: #fafafa;
+  --color-primary: #3a86ff;
+  --color-secondary: #ff006e;
+  --color-accent: #ffbe0b;
+  --color-cardBg: rgba(30, 30, 30, 0.8);
+  --color-border: rgba(75, 85, 99, 0.3);
+  
+  /* ShadCN UI Theme Variables */
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --primary: 207 90% 54%;
+  --primary-foreground: 211 100% 99%;
+  --secondary: 333 90% 50%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 40 100% 50%;
+  --accent-foreground: 24 9.8% 10%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 240 4.9% 83.9%;
+  --radius: 0.5rem;
+  
+  /* Code syntax highlighting */
+  --syntax-keyword: #ff79c6;
+  --syntax-function: #50fa7b;
+  --syntax-string: #f1fa8c;
+  --syntax-number: #bd93f9;
+  --syntax-comment: #6272a4;
+  --syntax-operator: #ff79c6;
+  --syntax-variable: #8be9fd;
+}
+
+/* Light theme overrides */
+.light-theme {
+  --color-background: #f5f5f5;
+  --color-text: #121212;
+  --color-primary: #1a6cdf;
+  --color-secondary: #d1004e;
+  --color-accent: #ffa500;
+  --color-cardBg: rgba(255, 255, 255, 0.8);
+  --color-border: rgba(75, 85, 99, 0.2);
+  
+  /* ShadCN UI Theme Variables for light mode */
+  --background: 0 0% 96%;
+  --foreground: 20 14.3% 4.1%;
+  --muted: 60 4.8% 95.9%;
+  --muted-foreground: 25 5.3% 44.7%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 20 14.3% 4.1%;
+  --card: 0 0% 100%;
+  --card-foreground: 20 14.3% 4.1%;
+  --border: 20 5.9% 90%;
+  --input: 20 5.9% 90%;
+  --primary: 207 90% 40%;
+  --primary-foreground: 211 100% 99%;
+  --secondary: 333 90% 40%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 40 100% 40%;
+  --accent-foreground: 24 9.8% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --ring: 20 14.3% 4.1%;
+  
+  /* Code syntax highlighting for light mode */
+  --syntax-keyword: #d4117e;
+  --syntax-function: #008b3e;
+  --syntax-string: #7d7300;
+  --syntax-number: #5b10c2;
+  --syntax-comment: #475577;
+  --syntax-operator: #d4117e;
+  --syntax-variable: #0088a7;
+}
 
 @layer base {
   * {
@@ -53,7 +91,26 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s, color 0.3s;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    @apply font-sans antialiased;
+  }
+  
+  /* Default element styling */
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--color-text);
+  }
+  
+  a {
+    color: var(--color-primary);
+    transition: color 0.2s;
+  }
+  
+  a:hover {
+    color: var(--color-secondary);
   }
 }
 

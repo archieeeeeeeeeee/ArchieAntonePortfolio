@@ -12,6 +12,7 @@ import CustomCursor from "@/components/CustomCursor";
 import ProgressIndicator from "@/components/ProgressIndicator";
 import Navbar from "@/components/Navbar";
 import BackToTop from "@/components/BackToTop";
+import ThemeToggle from "@/components/ThemeToggle";
 import NotFound from "@/pages/not-found";
 
 // Load sections with React.lazy for better performance
@@ -139,9 +140,10 @@ function Home() {
   }
 
   return (
-    <div className="bg-dark text-light font-inter overflow-x-hidden relative">
+    <div className="font-inter overflow-x-hidden relative">
       <CustomCursor />
       <ProgressIndicator />
+      <ThemeToggle />
       <Navbar />
       <main ref={mainRef}>
         <Suspense fallback={<LoadingFallback />}>
@@ -156,12 +158,32 @@ function Home() {
       </main>
       <BackToTop visible={showBackToTop} />
       
-      {/* Developer-style corner decoration */}
-      <div className="fixed left-0 top-0 w-16 h-16 pointer-events-none opacity-30 z-10 hidden md:block">
+      {/* Developer-style corner decorations */}
+      <div className="fixed left-4 top-4 w-16 h-16 pointer-events-none opacity-30 z-10 hidden md:block">
         <div className="text-primary font-mono">{"<>"}</div>
       </div>
-      <div className="fixed right-0 bottom-0 w-16 h-16 pointer-events-none opacity-30 z-10 hidden md:block">
+      <div className="fixed right-4 bottom-4 w-16 h-16 pointer-events-none opacity-30 z-10 hidden md:block">
         <div className="text-primary font-mono">{"</>"}</div>
+      </div>
+      
+      {/* Additional developer-themed 3D decoration */}
+      <div className="fixed -left-24 top-1/2 transform -translate-y-1/2 w-48 h-48 opacity-5 rotate-12 pointer-events-none hidden lg:block">
+        <pre className="text-xs text-primary font-mono">
+          {`function init() {
+  const app = create();
+  return app.start();
+}`}
+        </pre>
+      </div>
+      <div className="fixed -right-24 top-1/3 transform -translate-y-1/2 w-48 h-48 opacity-5 -rotate-12 pointer-events-none hidden lg:block">
+        <pre className="text-xs text-secondary font-mono">
+          {`const animate = () => {
+  requestAnimationFrame(
+    animate
+  );
+  render();
+};`}
+        </pre>
       </div>
     </div>
   );
