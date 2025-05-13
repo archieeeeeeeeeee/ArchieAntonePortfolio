@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { Sun, Moon, Code, Terminal, MonitorSmartphone } from 'lucide-react';
+import { Sun, Moon, Code, Terminal, Sparkles, Lightbulb, Palette } from 'lucide-react';
 import gsap from 'gsap';
+import Draggable from 'gsap/Draggable';
+
+// Register GSAP plugins
+gsap.registerPlugin(Draggable);
 
 const themes = {
   dark: {
@@ -42,120 +46,104 @@ const applyTheme = (theme: 'dark' | 'light') => {
 
 const ThemeToggle = () => {
   const [isDark, setIsDark] = useState(true);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const buttonRef = useRef<HTMLDivElement>(null);
-  const iconContainerRef = useRef<HTMLDivElement>(null);
-  const floatingTl = useRef<gsap.core.Timeline | null>(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const toggleRef = useRef<HTMLDivElement>(null);
+  const switchRef = useRef<HTMLButtonElement>(null);
+  const orbitRef = useRef<HTMLDivElement>(null);
+  const draggableRef = useRef<Draggable.Vars | null>(null);
+  const lastTap = useRef<number>(0);
   
-  // Initialize theme
+  // Initialize theme and draggable
   useEffect(() => {
     // Check for saved theme preference
     const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' || 'dark';
     setIsDark(savedTheme === 'dark');
     applyTheme(savedTheme);
     
-    // Initialize entry animation
-    if (buttonRef.current) {
-      gsap.from(buttonRef.current, {
-        x: 100,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'elastic.out(1, 0.5)',
-        delay: 0.4
+    // Setup draggable behavior
+    if (toggleRef.current) {
+      // Initial animation
+      gsap.fromTo(toggleRef.current, 
+        { y: -100, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, ease: "elastic.out(1, 0.5)" }
+      );
+      
+      // Make it draggable
+      draggableRef.current = Draggable.create(toggleRef.current, {
+        type: "x,y",
+        edgeResistance: 0.65,
+        bounds: window,
+        inertia: true,
+        onDragEnd: function() {
+          // Save position to state
+          if (this.x !== undefined && this.y !== undefined) {
+            setPosition({ x: this.x, y: this.y });
+          }
+        }
+      })[0];
+    }
+    
+    // Set up rotating orbit effect
+    if (orbitRef.current) {
+      gsap.to(orbitRef.current, {
+        rotation: 360,
+        duration: 20,
+        repeat: -1,
+        ease: "none"
       });
     }
     
-    // Setup floating animation
-    startFloatingAnimation();
-    
-    // Add scroll listener to adjust position
-    const handleScroll = () => {
-      if (buttonRef.current) {
-        const scrollY = window.scrollY;
-        const maxScroll = document.body.scrollHeight - window.innerHeight;
-        const scrollPercentage = scrollY / maxScroll;
-        
-        // Max vertical movement of 40vh
-        const maxMove = window.innerHeight * 0.4;
-        const newY = 100 + (scrollPercentage * maxMove);
-        
-        gsap.to(buttonRef.current, { 
-          y: newY,
-          duration: 0.6,
-          ease: "power2.out"
-        });
+    return () => {
+      // Clean up
+      if (draggableRef.current) {
+        draggableRef.current.kill();
       }
     };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
-  // Setup floating animation
-  const startFloatingAnimation = () => {
-    if (!buttonRef.current) return;
-    
-    // Cancel existing animation if already running
-    if (floatingTl.current) {
-      floatingTl.current.kill();
-    }
-    
-    // Create floating animation
-    floatingTl.current = gsap.timeline({ repeat: -1, yoyo: true });
-    floatingTl.current
-      .to(buttonRef.current, {
-        y: '+=10',
-        duration: 1.5,
-        ease: 'sine.inOut'
-      })
-      .to(buttonRef.current, {
-        y: '-=10',
-        duration: 1.5,
-        ease: 'sine.inOut'
-      });
-  };
-  
   // Toggle theme with animation
-  const toggleTheme = () => {
+  const toggleTheme = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent event bubbling
+    
     const newTheme = isDark ? 'light' : 'dark';
     
-    // Create particle effects
-    createParticles();
+    // Create particle explosion
+    createParticleExplosion();
     
-    // Pause floating animation during theme change
-    if (floatingTl.current) {
-      floatingTl.current.pause();
-    }
-    
-    // Animate the toggle with a more elaborate sequence
-    if (iconContainerRef.current && buttonRef.current) {
+    // Animate the toggle button
+    if (switchRef.current) {
+      // Disable dragging temporarily
+      if (draggableRef.current) {
+        draggableRef.current.disable();
+      }
+      
+      // Create cool rotation animation
       const tl = gsap.timeline({
         onComplete: () => {
           setIsDark(!isDark);
           applyTheme(newTheme);
           
-          // Resume floating animation
-          if (floatingTl.current) {
-            floatingTl.current.resume();
+          // Re-enable dragging
+          if (draggableRef.current) {
+            draggableRef.current.enable();
           }
         }
       });
       
-      tl.to(buttonRef.current, {
-        scale: 1.2,
+      tl.to(switchRef.current, {
+        scale: 1.5,
         duration: 0.3,
-        ease: 'back.out(1.7)',
+        ease: "back.out(2)",
       })
-      .to(iconContainerRef.current, {
+      .to(switchRef.current, {
         rotation: 360,
         duration: 0.6,
-        ease: 'power2.inOut',
+        ease: "power1.inOut"
       }, "-=0.1")
-      .to(buttonRef.current, {
+      .to(switchRef.current, {
         scale: 1,
         duration: 0.3,
-        ease: 'back.out',
+        ease: "back.out(1)",
       });
     } else {
       setIsDark(!isDark);
@@ -163,190 +151,187 @@ const ThemeToggle = () => {
     }
   };
   
-  // Create particle effects during theme toggle
-  const createParticles = () => {
+  // Create particle explosion effect
+  const createParticleExplosion = () => {
+    if (!toggleRef.current) return;
+    
+    // Get the button's position
+    const rect = toggleRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    // Create a container for the particles
     const container = document.createElement('div');
-    container.className = 'absolute inset-0 pointer-events-none overflow-hidden';
-    container.style.zIndex = '9999';
+    container.className = 'fixed inset-0 pointer-events-none z-50';
     document.body.appendChild(container);
     
-    const particleCount = 20;
-    const particles = [];
+    // Create particles
+    const particleCount = 24;
+    const colors = isDark ? 
+      ['#ffbe0b', '#fb5607', '#ff006e', '#8338ec', '#3a86ff'] : 
+      ['#3a86ff', '#8338ec', '#ff006e', '#fb5607', '#ffbe0b'];
     
     for (let i = 0; i < particleCount; i++) {
+      // Create particle element
       const particle = document.createElement('div');
       particle.className = 'absolute rounded-full';
-      particle.style.width = `${Math.random() * 10 + 5}px`;
-      particle.style.height = particle.style.width;
-      particle.style.backgroundColor = isDark 
-        ? `hsl(${Math.random() * 60 + 40}, 100%, 60%)` 
-        : `hsl(${Math.random() * 60 + 220}, 100%, 60%)`;
-      particle.style.left = `${buttonRef.current?.getBoundingClientRect().left || 0}px`;
-      particle.style.top = `${buttonRef.current?.getBoundingClientRect().top || 0}px`;
       
+      // Random size between 6px and 12px
+      const size = Math.random() * 6 + 6;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      
+      // Random color from our palette
+      particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      
+      // Position at the center of the button
+      particle.style.left = `${centerX}px`;
+      particle.style.top = `${centerY}px`;
+      
+      // Add to DOM
       container.appendChild(particle);
-      particles.push(particle);
       
+      // Calculate random angle and distance
+      const angle = Math.random() * Math.PI * 2; // 0 to 2π
+      const distance = 60 + Math.random() * 80; // 60px to 140px
+      
+      // Calculate end position based on angle and distance
+      const endX = Math.cos(angle) * distance;
+      const endY = Math.sin(angle) * distance;
+      
+      // Animate the particle
       gsap.to(particle, {
-        x: Math.random() * 200 - 100,
-        y: Math.random() * 200 - 100,
+        x: endX,
+        y: endY,
         opacity: 0,
-        scale: 0,
-        duration: Math.random() * 1 + 0.5,
-        ease: 'power2.out',
+        duration: 1 + Math.random() * 0.5,
+        ease: "power2.out",
         onComplete: () => {
-          if (container && container.parentNode) {
-            container.removeChild(particle);
-            if (container.childNodes.length === 0) {
-              document.body.removeChild(container);
-            }
+          container.removeChild(particle);
+          if (container.childNodes.length === 0) {
+            document.body.removeChild(container);
           }
         }
       });
     }
   };
   
-  // Handle hover state
-  const handleMouseEnter = () => {
-    setIsHovered(true);
+  // Handle double tap on mobile
+  const handleTap = (e: React.TouchEvent) => {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTap.current;
     
-    // Pause floating animation during hover
-    if (floatingTl.current) {
-      floatingTl.current.pause();
+    if (tapLength < 300 && tapLength > 0) {
+      // Double tap detected
+      e.preventDefault();
+      toggleTheme(e as unknown as React.MouseEvent);
     }
     
-    // Scale up the button
-    gsap.to(buttonRef.current, {
-      scale: 1.1,
-      duration: 0.3,
-      ease: 'back.out',
-    });
+    lastTap.current = currentTime;
   };
   
-  const handleMouseLeave = () => {
-    setIsHovered(false);
+  // Generate spinning orbit items
+  const renderOrbitItems = () => {
+    const items = [];
+    const totalItems = 5;
     
-    // Resume floating animation after hover
-    if (floatingTl.current) {
-      floatingTl.current.resume();
+    for (let i = 0; i < totalItems; i++) {
+      const angle = (i / totalItems) * Math.PI * 2;
+      const x = Math.cos(angle) * 30; // 30px radius
+      const y = Math.sin(angle) * 30;
+      
+      items.push(
+        <div 
+          key={i}
+          className="absolute w-2 h-2 rounded-full bg-primary animate-pulse-slow"
+          style={{
+            transform: `translate(${x}px, ${y}px)`,
+            opacity: 0.6 + (i / totalItems) * 0.4,
+            backgroundColor: i % 2 === 0 ? 'var(--color-primary)' : 'var(--color-secondary)'
+          }}
+        />
+      );
     }
     
-    // Scale back to normal size
-    gsap.to(buttonRef.current, {
-      scale: 1,
-      duration: 0.3,
-      ease: 'back.out',
-    });
-    
-    // Collapse expanded button
-    setIsExpanded(false);
-  };
-  
-  // Handle button click to expand
-  const handleExpandClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsExpanded(!isExpanded);
-    
-    if (!isExpanded) {
-      gsap.to(buttonRef.current, {
-        scale: 1.05,
-        duration: 0.3,
-        ease: 'back.out(1.7)',
-      });
-    } else {
-      gsap.to(buttonRef.current, {
-        scale: 1,
-        duration: 0.3,
-        ease: 'back.in',
-      });
-    }
+    return items;
   };
   
   return (
     <div 
-      ref={buttonRef}
-      className="fixed right-6 top-24 z-50 select-none"
-      style={{ transform: 'translateZ(0)' }}
+      ref={toggleRef}
+      className="fixed z-50 cursor-move select-none"
+      style={{ 
+        top: '100px',
+        right: '20px',
+        transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
+        touchAction: 'none' // Prevents default touch actions on mobile
+      }}
+      onTouchEnd={handleTap}
     >
-      {/* Main Theme Toggle Button */}
-      <div
-        className="cursor-pointer flex items-center shadow-lg transition-all duration-300 overflow-hidden"
-        style={{ 
-          backgroundColor: isDark 
-            ? 'rgba(30, 30, 30, 0.95)' 
-            : 'rgba(255, 255, 255, 0.95)',
-          color: isDark ? '#ffffff' : '#000000',
-          borderRadius: '50px',
-          border: isDark 
-            ? '2px solid rgba(58, 134, 255, 0.5)' 
-            : '2px solid rgba(26, 108, 223, 0.5)',
-          padding: isExpanded ? '12px 20px' : '12px',
-          width: isExpanded ? 'auto' : '48px',
-          boxShadow: isHovered 
-            ? `0 0 20px ${isDark ? 'rgba(58, 134, 255, 0.5)' : 'rgba(26, 108, 223, 0.5)'}` 
-            : `0 4px 15px rgba(0, 0, 0, 0.2)`,
-          transition: 'all 0.3s ease-in-out'
-        }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onClick={handleExpandClick}
-      >
-        <div className="p-1 rounded-full" style={{ 
-          backgroundColor: isDark 
-            ? 'rgba(58, 134, 255, 0.3)' 
-            : 'rgba(26, 108, 223, 0.1)'
-        }}>
-          <div ref={iconContainerRef} className="flex items-center justify-center">
-            {isDark ? (
-              <Sun className="h-5 w-5 text-yellow-300" />
-            ) : (
-              <Moon className="h-5 w-5 text-indigo-600" />
-            )}
-          </div>
-        </div>
-        
-        {/* Expanded content */}
-        <div 
-          className="overflow-hidden transition-all duration-300"
-          style={{ 
-            maxWidth: isExpanded ? '200px' : '0',
-            opacity: isExpanded ? 1 : 0,
-            marginLeft: isExpanded ? '10px' : '0'
-          }}
-        >
-          <div className="whitespace-nowrap text-sm font-medium">
-            Switch to {isDark ? 'Light' : 'Dark'} Mode
-          </div>
-        </div>
-        
-        {/* Coding symbol floating decoration */}
-        <div 
-          className="absolute -top-2 -right-2 text-xs animate-pulse"
-          style={{ 
-            color: isDark ? 'var(--color-primary)' : 'var(--color-secondary)',
-            zIndex: 2
-          }}
-        >
-          {isDark ? <Code className="h-3 w-3" /> : <Terminal className="h-3 w-3" />}
-        </div>
+      {/* Animated orbit decoration */}
+      <div ref={orbitRef} className="absolute inset-0 pointer-events-none">
+        {renderOrbitItems()}
       </div>
       
-      {/* Switch button that appears when expanded */}
-      {isExpanded && (
-        <button
-          className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 cursor-pointer rounded-full p-3 transition-all duration-300"
-          style={{ 
-            backgroundColor: isDark 
-              ? 'rgba(255, 0, 110, 0.8)' 
-              : 'rgba(26, 108, 223, 0.8)',
-            boxShadow: `0 4px 15px ${isDark ? 'rgba(255, 0, 110, 0.5)' : 'rgba(26, 108, 223, 0.5)'}`
-          }}
-          onClick={toggleTheme}
-          aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
-        >
-          <MonitorSmartphone className="h-5 w-5 text-white" />
-        </button>
-      )}
+      {/* Glow effect */}
+      <div 
+        className="absolute inset-0 rounded-full animate-glow" 
+        style={{
+          filter: 'blur(10px)',
+          opacity: 0.4,
+          background: isDark 
+            ? 'radial-gradient(circle, var(--color-primary) 0%, var(--color-secondary) 100%)' 
+            : 'radial-gradient(circle, var(--color-secondary) 0%, var(--color-primary) 100%)'
+        }}
+      />
+      
+      {/* Main toggle button */}
+      <button
+        ref={switchRef}
+        className="w-16 h-16 rounded-full flex items-center justify-center relative z-10 border-4"
+        style={{
+          background: isDark 
+            ? 'linear-gradient(135deg, #121212 0%, #1e1e2a 100%)' 
+            : 'linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%)',
+          borderColor: isDark 
+            ? 'rgba(58, 134, 255, 0.6)' 
+            : 'rgba(26, 108, 223, 0.6)',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)'
+        }}
+        onClick={toggleTheme}
+        aria-label={`Switch to ${isDark ? 'light' : 'dark'} theme`}
+      >
+        <div className="absolute inset-0 flex items-center justify-center">
+          {isDark ? (
+            <Sun className="h-8 w-8 text-yellow-300 animate-pulse-slow" />
+          ) : (
+            <Moon className="h-8 w-8 text-indigo-600 animate-pulse-slow" />
+          )}
+        </div>
+        
+        {/* Small decorative icons floating around */}
+        <div className="absolute -top-2 -right-2 text-xs animate-pulse-slow">
+          <Sparkles className="h-4 w-4" style={{ color: isDark ? '#ffbe0b' : '#3a86ff' }} />
+        </div>
+        <div className="absolute -bottom-2 -left-2 text-xs animate-pulse-slow">
+          <Palette className="h-4 w-4" style={{ color: isDark ? '#ff006e' : '#d1004e' }} />
+        </div>
+      </button>
+      
+      {/* Tooltip/hint */}
+      <div 
+        className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-opacity-80 px-3 py-1 rounded text-xs font-medium pointer-events-none"
+        style={{
+          backgroundColor: isDark ? 'rgba(30, 30, 30, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+          color: isDark ? '#ffffff' : '#000000',
+          whiteSpace: 'nowrap',
+          backdropFilter: 'blur(4px)',
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
+          opacity: 0.9
+        }}
+      >
+        Drag me or click to toggle theme
+      </div>
     </div>
   );
 };
