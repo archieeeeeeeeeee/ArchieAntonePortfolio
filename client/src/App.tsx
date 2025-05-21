@@ -12,7 +12,7 @@ import CustomCursor from "@/components/CustomCursor";
 import ProgressIndicator from "@/components/ProgressIndicator";
 import Navbar from "@/components/Navbar";
 import BackToTop from "@/components/BackToTop";
-import CatToggle from "@/components/CatToggle";
+/* import CatToggle from "@/components/CatToggle"; */
 import NotFound from "@/pages/not-found";
 
 // Load sections with React.lazy for better performance
@@ -143,7 +143,7 @@ function Home() {
     <div className="font-inter overflow-x-hidden relative">
       <CustomCursor />
       <ProgressIndicator />
-      <CatToggle />
+      {/* <CatToggle /> */}
       <Navbar />
       <main ref={mainRef}>
         <Suspense fallback={<LoadingFallback />}>

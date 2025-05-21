@@ -107,7 +107,7 @@ const About = () => {
             </div>
             <a 
               href="#" 
-              className="inline-flex items-center bg-primary hover:bg-primary/90 text-light px-6 py-3 rounded-md font-medium transition-colors"
+              className="inline-flex items-center bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md font-medium transition-colors"
             >
               <FileDown className="mr-2 h-5 w-5" /> Download Resume
             </a>

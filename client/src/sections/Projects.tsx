@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { ExternalLink, Github, Code, Braces, FolderGit2 } from "lucide-react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
 import { resume } from "@/data/resume";
 import ScrollingCode from "@/components/ScrollingCode";
 
@@ -175,22 +177,22 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
           
           {/* Project links */}
           <div className="flex mt-4 space-x-3">
-            <a 
-              href={project.liveUrl} 
-              className="bg-primary hover:bg-primary/90 text-light rounded-md px-3 py-2 text-sm flex items-center transition-colors"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <ExternalLink className="h-4 w-4 mr-1" /> Live Site
-            </a>
-            <a 
-              href={project.githubUrl} 
-              className="bg-gray-800 hover:bg-gray-700 text-light rounded-md px-3 py-2 text-sm flex items-center transition-colors"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Github className="h-4 w-4 mr-1" /> Code
-            </a>
+              <a 
+                href={project.liveUrl} 
+                className="bg-primary hover:bg-primary/90 text-white rounded-md px-3 py-2 text-sm flex items-center transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <ExternalLink className="h-4 w-4 mr-1" /> Live Site
+              </a>
+              <a 
+                href={project.githubUrl} 
+                className="bg-gray-800 hover:bg-gray-700 text-white rounded-md px-3 py-2 text-sm flex items-center transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Github className="h-4 w-4 mr-1" /> Code
+              </a>
           </div>
         </div>
         
@@ -213,19 +215,20 @@ const Projects = () => {
   const headingRef = useRef<HTMLDivElement>(null);
   const projectsGridRef = useRef<HTMLDivElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
+  const otherSkillsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!sectionRef.current) return;
     
     // Create timeline for animation
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top 80%",
-        end: "center center",
-        toggleActions: "play none none none",
-      },
-    });
+const tl = gsap.timeline({
+  scrollTrigger: {
+    trigger: sectionRef.current,
+    start: "top 80%",
+    toggleActions: "play none none none",
+    once: true,
+  },
+});
 
     // Heading animation
     if (headingRef.current) {
@@ -246,18 +249,15 @@ const Projects = () => {
       
       // Animate terminal lines
       const terminalLines = terminalRef.current.querySelectorAll('.terminal-line');
-      if (terminalLines.length > 0) {
-        gsap.from(terminalLines, {
-          opacity: 0,
-          y: 10,
-          stagger: 0.2,
-          duration: 0.5,
-          scrollTrigger: {
-            trigger: terminalRef.current,
-            start: "top 80%",
-          }
-        });
-      }
+if (terminalLines.length > 0) {
+  tl.from(terminalLines, {
+    opacity: 0,
+    y: 10,
+    stagger: 0.2,
+    duration: 0.5,
+  }, "-=0.3")
+  .set(terminalLines, {opacity: 1, clearProps: "transform"});
+}
     }
 
     // Projects grid animation
@@ -382,6 +382,21 @@ const Projects = () => {
           {resume.projects.map((project, index) => (
             <ProjectCard key={index} project={project} index={index} />
           ))}
+        </div>
+
+        {/* Other Skills section */}
+        <div className="mt-16">
+          <h3 className="text-2xl font-semibold mb-4">Other Skills</h3>
+          <div className="flex flex-wrap gap-3">
+            {resume.skills.other.map((skill, index) => (
+              <span 
+                key={index} 
+                className="bg-primary/20 text-primary px-3 py-1 rounded-md text-sm font-medium"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </section>

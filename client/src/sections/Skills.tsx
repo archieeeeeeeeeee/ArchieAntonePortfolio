@@ -9,6 +9,9 @@ import {
 } from 'react-icons/fa';
 import { SiTailwindcss, SiMysql } from 'react-icons/si';
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 import { resume } from "@/data/resume";
 import ScrollingCode from "@/components/ScrollingCode";
 
@@ -189,15 +192,10 @@ const Skills = () => {
     // Staggered animation for skill cards
     const cards = cardsRef.current?.querySelectorAll('.skill-card');
     if (cards) {
-      gsap.from(cards, {
-        opacity: 0,
-        y: 20,
-        duration: 0.5,
-        stagger: 0.1,
-        scrollTrigger: {
-          trigger: cardsRef.current,
-          start: "top 70%",
-        },
+      // Remove animation to make grid visible immediately
+      gsap.set(cards, {
+        opacity: 1,
+        y: 0,
       });
     }
 
