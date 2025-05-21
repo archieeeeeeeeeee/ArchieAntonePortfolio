@@ -1,4 +1,4 @@
-import{r as i,g as c,j as a}from"./index-DpDkm-QN.js";const m=768;function w(){const[r,s]=i.useState(void 0);return i.useEffect(()=>{const l=window.matchMedia(`(max-width: ${m-1}px)`),n=()=>{s(window.innerWidth<m)};return l.addEventListener("change",n),s(window.innerWidth<m),()=>l.removeEventListener("change",n)},[]),!!r}const E=({direction:r="left",speed:s=30,className:l=""})=>{const n=i.useRef(null),d=i.useRef(null),u=w(),f=[`function animateElements() {
+import{r as i,g as c,j as a}from"./index-Dojk0CJ3.js";const m=768;function w(){const[r,s]=i.useState(void 0);return i.useEffect(()=>{const l=window.matchMedia(`(max-width: ${m-1}px)`),n=()=>{s(window.innerWidth<m)};return l.addEventListener("change",n),s(window.innerWidth<m),()=>l.removeEventListener("change",n)},[]),!!r}const E=({direction:r="left",speed:s=30,className:l=""})=>{const n=i.useRef(null),d=i.useRef(null),u=w(),f=[`function animateElements() {
   gsap.from(elements, {
     opacity: 0,
     y: 50,
